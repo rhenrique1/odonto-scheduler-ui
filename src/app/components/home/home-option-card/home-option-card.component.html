@@ -1,0 +1,14 @@
+<mat-card class="on-mouse-hover">
+    <mat-card-header>
+        <div mat-card-avatar class="home-option-card-icon" [ngClass]="optionCardData.iconClass">
+        </div>
+        <mat-card-title>{{ optionCardData.title }}</mat-card-title>
+        <mat-card-subtitle>{{ optionCardData.subtitle }}</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image src="{{ optionCardData.imageSrc }}" alt="{{ optionCardData.subtitle }}">
+    <mat-card-content>
+        <p class="mt-3">
+            {{ optionCardData.cardContent }}
+        </p>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,57 @@
+<form *ngIf="!isLoading" [formGroup]="patientForm" (ngSubmit)="onSubmitPatient()">
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput placeholder="Rolando Ladeira" formControlName="name">
+            <mat-error>Insira um nome</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input type="email" matInput placeholder="exemplo@exemplo.com" formControlName="email">
+            <mat-error>{{ getEmailErrorMessage() }}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input type="tel" matInput placeholder="(20) 99444-5555" formControlName="telephone">
+            <mat-error>{{ getTelephoneErrorMessage() }}</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Endereço</mat-label>
+            <input matInput placeholder="Parque das Laranjeiras" formControlName="address">
+            <mat-error>Insira um endereço</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-label>Gênero</mat-label>
+        <mat-radio-group color="primary" aria-label="Gênero" formControlName="gender">
+            <mat-radio-button *ngFor="let gender of genders" [value]="gender">
+                {{ gender }}
+            </mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="!patientForm.get('gender').valid">Selecione um gênero</mat-error>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput placeholder="444.444.444-44" formControlName="cpf">
+            <mat-error>Insira um CPF</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Observações</mat-label>
+            <textarea matInput placeholder="Paciente tem 7 dentes faltando" rows="8" formControlName="notes"></textarea>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <button mat-flat-button class="ms-3" color="primary" type="submit">ADICIONAR</button>
+        </div>
+    </div>
+</form>
