@@ -4,30 +4,8 @@
             <div class="m-auto text-center">
                 <h1 class="fw-bold">Odonto Scheduler</h1>
                 <h2 class="fw-medium">Acesse a sua conta</h2>
+                <app-auth-card></app-auth-card>
             </div>
-            <mat-card class="m-auto w-50">
-                <mat-card-content>
-                    <form>
-                        <p>
-                            <mat-form-field class="w-100" appearance="fill">
-                                <mat-label>Insira seu usuário</mat-label>
-                                <input matInput placeholder="Usuário">
-                            </mat-form-field>
-                        </p>
-                        <p>
-                            <mat-form-field class="w-100" appearance="fill">
-                                <mat-label>Insira sua senha</mat-label>
-                                <input matInput [type]="hide ? 'password' : 'text'">
-                                <button mat-icon-button matSuffix (click)="hide = !hide"
-                                    [attr.aria-label]="'Esconder senha'" [attr.aria-pressed]="hide">
-                                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                                </button>
-                            </mat-form-field>
-                        </p>
-                        <button class="w-100" mat-raised-button color="primary" [disabled]="false">ENTRAR</button>
-                    </form>
-                </mat-card-content>
-            </mat-card>
         </div>
     </div>
 </div>

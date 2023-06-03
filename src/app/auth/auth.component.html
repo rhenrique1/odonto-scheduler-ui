@@ -1,0 +1,53 @@
+<ng-container *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+</ng-container>
+<ng-container *ngIf="!isLoading">
+    <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+        <mat-form-field class="w-100" appearance="fill">
+            <mat-label for="username">Nome de Usuário</mat-label>
+            <input matInput placeholder="Usuário" id="username" ngModel name="username" required>
+        </mat-form-field>
+
+        <!-- Should be hidden if the user is in loginMode  -->
+        <ng-container *ngIf="!isLoginMode">
+            <mat-form-field class="w-100" appearance="fill">
+                <mat-label for="email">Email</mat-label>
+                <input matInput type="email" placeholder="email" id="email" ngModel name="email" required email>
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+                <mat-label for="fullName">Nome Completo</mat-label>
+                <input matInput placeholder="Nome Completo" id="fullName" ngModel name="fullName" required>
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+                <mat-label for="cpf">Documento (CPF)</mat-label>
+                <input matInput type="text" placeholder="444.444.444-44" id="cpf" ngModel name="document" required>
+            </mat-form-field>
+            <mat-form-field class="w-100" appearance="fill">
+                <mat-label for="phoneNumber">Número de Telefone</mat-label>
+                <input matInput type="tel" placeholder="(15) 99144-4444" id="phoneNumber" ngModel name="phoneNumber"
+                    required>
+            </mat-form-field>
+        </ng-container>
+
+        <mat-form-field class="w-100" appearance="fill">
+            <mat-label for="password">Senha</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'" id="password" ngModel name="password" required
+                minlength="8">
+            <button mat-icon-button matSuffix type="button" (click)="hide = !hide" [attr.aria-label]="'Esconder senha'"
+                [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
+        <div>
+            <button class="w-100" mat-raised-button color="primary" type="submit" [disabled]="!authForm.valid">{{
+                isLoginMode ?
+                'LOGIN' : 'CRIAR CONTA' }}</button>
+        </div>
+        <hr>
+        <div class="mt-3">
+            <button class="w-100" mat-raised-button color="primary" (click)="onSwitchMode()" type="button">TROCAR PARA
+                {{
+                isLoginMode ? 'NOVA CONTA' : 'LOGIN' }}</button>
+        </div>
+    </form>
+</ng-container>
