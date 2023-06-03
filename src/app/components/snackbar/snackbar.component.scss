@@ -1,0 +1,12 @@
+.toast-success,
+.toast-error {
+  color: var(--white-color) !important;
+}
+
+.toast-success {
+  background: var(--success-color) !important;
+}
+
+.toast-error {
+  background: var(--delete-color) !important;
+}
