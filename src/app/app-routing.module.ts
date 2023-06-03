@@ -4,6 +4,7 @@ import { PatientsPageComponent } from './pages/patients-page/patients-page.compo
 import { PatientDetailComponent } from './pages/patient-detail/patient-detail.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { AddPatientPageComponent } from './pages/add-patient-page/add-patient-page.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
     path: 'editar-paciente/:id',
     component: PatientDetailComponent,
   },
+  {
+    path: 'login',
+    component: LoginPageComponent
+  }
 ];
 
 @NgModule({
