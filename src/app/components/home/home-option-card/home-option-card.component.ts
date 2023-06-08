@@ -5,14 +5,11 @@ import { Component, Input } from '@angular/core';
   templateUrl: './home-option-card.component.html',
   styleUrls: ['./home-option-card.component.scss']
 })
-export class HomeOptionCardComponent {
-  @Input() public optionCardData!: OptionCardData;
-}
 
-export interface OptionCardData {
-  title: string;
-  subtitle: string;
-  imageSrc: string;
-  iconClass: string;
-  cardContent: string;
+export class HomeOptionCardComponent {
+  @Input() public title: string;
+  @Input() public subtitle: string;
+  @Input() public imageSrc: string;
+  @Input() public iconClass: string;
+  @Input() public cardContent: string;
 }

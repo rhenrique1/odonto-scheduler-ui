@@ -1,25 +1,37 @@
-import { Component } from '@angular/core';
-import { OptionCardData } from 'src/app/components/home/home-option-card/home-option-card.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss']
 })
-export class HomePageComponent {
-  public appointmentsCardData: OptionCardData = {
-    title: 'Consultas',
-    subtitle: 'Agendar e visualizar consultas',
-    imageSrc: 'assets/images/appointments-card-image.jpg',
-    iconClass: 'doctor-icon',
-    cardContent: 'Na seção de Consultas você pode visualizar, alterar, agendar e remover consultas.'
+export class HomePageComponent implements OnInit, OnDestroy {
+  private userSub: Subscription;
+  public isAuthenticated: boolean = false;
+  public welcomeMessage: string = 'Por favor entre na sua conta.';
+
+  //TODO: remove if implemented
+  // public appointmentsCardData: OptionCardData = new OptionCardData(
+  //   'Consultas',
+  //   'Agendar e visualizar consultas',
+  //   'assets/images/appointments-card-image.jpg',
+  //   'doctor-icon',
+  //   'Na seção de Consultas você pode visualizar, alterar, agendar e remover consultas.'
+  // );
+
+  constructor(private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.userSub = this.authService.user.subscribe(
+      user => {
+        // this.welcomeMessage = `Olá ${user.username}, bem-vindo(a) ao Odonto Scheduler!`;
+        this.isAuthenticated = !!user;
+      });
   }
 
-  public patientsCardData: OptionCardData = {
-    title: 'Pacientes',
-    subtitle: 'Agendar e visualizar pacientes',
-    imageSrc: 'assets/images/patients-card-image.jpg',
-    iconClass: 'patient-icon',
-    cardContent: 'Na seção de Pacientes você pode visualizar, alterar e remover pacientes.'
+  ngOnDestroy(): void {
+    this.userSub.unsubscribe();
   }
 }
