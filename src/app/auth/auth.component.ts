@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthUser, AuthService } from './auth.service';
+import { AuthRequestData, AuthService, AuthResponseData } from './auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../components/snackbar/snackbar.component';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -10,25 +12,24 @@ import { SnackbarComponent } from '../components/snackbar/snackbar.component';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
-  public hide: boolean = true;
+  public hidePassword: boolean = true;
   public isLoginMode: boolean = true;
   public isLoading: boolean = false;
+  public error: string = null;
 
-  //TODO: should start as null
-  public error: string = 'PLACEHOLDER TESTING MESSAGE';
-
-  constructor(private authService: AuthService, private snackBar: MatSnackBar) { }
+  constructor(private authService: AuthService, private snackBar: MatSnackBar, private router: Router) { }
 
   public onSwitchMode(): void {
     this.isLoginMode = !this.isLoginMode;
   }
 
   public onSubmit(form: NgForm): void {
+
     if (!form.valid) {
       return;
     }
 
-    const auth: AuthUser = {
+    const auth: AuthRequestData = {
       username: form.value.username,
       email: form.value.email,
       password: form.value.password,
@@ -37,27 +38,27 @@ export class AuthComponent {
       phoneNumber: form.value.phoneNumber,
     }
 
+    let authObs: Observable<AuthResponseData>;
+
     this.isLoading = true;
 
     if (this.isLoginMode) {
-      this.openSnackBar();
-      //TODO: add login request
-
+      authObs = this.authService.login(auth.username, auth.password);
     } else {
-      this.authService.signup(auth).subscribe({
-        next: (response) => {
-          console.log(response);
-
-          //TODO: login new user
-          this.isLoading = false;
-        },
-        error: () => {
-          this.error = 'Ocorreu um erro!';
-          this.isLoading = false;
-          this.openSnackBar();
-        }
-      });
+      authObs = this.authService.signup(auth);
     }
+
+    authObs.subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/home'])
+      },
+      error: (error) => {
+        this.error = error.message;
+        this.openSnackBar();
+        this.isLoading = false;
+      }
+    });
 
     form.reset();
   }
