@@ -14,8 +14,8 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 
 export class PatientDetailComponent {
   public isEditModeOn: boolean = false;
-  public patient!: Patient;
-  public patientId!: number;
+  public patient: Patient;
+  public patientId: string = null;
   public genders: string[] = [
     "Masculino", "Feminino"
   ]
@@ -32,7 +32,14 @@ export class PatientDetailComponent {
       this.patientId = params['id'];
     });
 
-    this.patient = this.patientService.getPatient(this.patientId);
+    this.patientService.getPatient(this.patientId).subscribe({
+      next: (response) => {
+        this.patient = response;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
   }
 
   public toggleEditMode(): void {
@@ -45,55 +52,50 @@ export class PatientDetailComponent {
 
   public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      width: '500px',
       data: {
         title: 'Remover Paciente',
-        description: `Tem certeza que deseja remover ${this.patient.name}?`,
+        description: `Tem certeza que deseja remover ${this.patient.fullName}?`,
         cancelButtonText: 'CANCELAR',
         confirmButtonText: 'REMOVER'
-      },
-      position: { top: '10vh' }
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //TODO: Add remove patient logic
       if (result) {
-        this.router.navigateByUrl('/pacientes');
+        this.patientService.deletePatient(this.patientId).subscribe({
+          next: () => {
+            this.router.navigateByUrl('/pacientes');
+          },
+          error: () => {
+            console.log('Ocorreu um erro ao deletar o paciente');
+            this.router.navigateByUrl('/pacientes');
+          }
+        });
       }
     });
   }
 
   public submitPatient(editPatientData: Patient): void {
-    const patientToUpdate: Patient = {
-      id: this.patient.id,
-      name: editPatientData.name,
-      address: editPatientData.address,
-      cpf: editPatientData.cpf,
-      email: editPatientData.email,
-      gender: editPatientData.gender,
-      notes: editPatientData.notes,
-      telephone: editPatientData.telephone
-    }
+    editPatientData.id = this.patientId;
 
-    if (this.patientService.updatePatient(patientToUpdate)) {
-      this.openConfirmDialog('Paciente Adicionado com Sucesso', 'O paciente foi adicionado com sucesso, clique para retornar à página de pacientes');
-      return;
-    }
-
-    // this.openConfirmDialog('Ocorreu um Erro', 'Ocorreu um erro ao adicionar o paciente, por favor, tente novamente');
-    return;
+    this.patientService.updatePatient(editPatientData).subscribe({
+      next: () => {
+        this.openConfirmDialog('Paciente Atualizado com Sucesso', 'O paciente foi atualizado com sucesso, clique para retornar à página de pacientes');
+      },
+      error: () => {
+        this.openConfirmDialog('Erro', 'Ocorreu um problema ao atualizar o paciente, clique para retornar à página de pacientes e tente novamente');
+      }
+    });
   }
 
   public openConfirmDialog(title: string, description: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '500px',
       data: {
         title: title,
         description: description,
         confirmButtonText: 'OK',
         shouldShowCancelButton: false
-      },
-      position: { top: '10vh' }
+      }
     });
 
     dialogRef.afterClosed().subscribe(() => {

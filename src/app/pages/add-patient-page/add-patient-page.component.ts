@@ -11,39 +11,42 @@ import { PatientService } from 'src/app/shared/services/patient.service';
   styleUrls: ['./add-patient-page.component.scss']
 })
 export class AddPatientPageComponent {
-  constructor(public dialog: MatDialog, private patientService: PatientService, private router: Router) { }
+  constructor(
+    public dialog: MatDialog,
+    private patientService: PatientService,
+    private router: Router
+  ) { }
 
   public submitPatient(newPatientData: Patient): void {
     const newPatient: Patient = {
-      id: 0,
-      name: newPatientData.name,
-      email: newPatientData.email,
+      document: newPatientData.document,
       telephone: newPatientData.telephone,
+      email: newPatientData.email,
+      fullName: newPatientData.fullName,
+      birthDate: newPatientData.birthDate,
       address: newPatientData.address,
       gender: newPatientData.gender,
-      cpf: newPatientData.cpf,
       notes: newPatientData.notes
     }
 
-    if (this.patientService.createPatient(newPatient)) {
-      this.openConfirmDialog('Paciente Adicionado com Sucesso', 'O paciente foi adicionado com sucesso, clique para retornar à página de pacientes');
-      return;
-    }
-
-    this.openConfirmDialog('Ocorreu um Erro', 'Ocorreu um erro ao adicionar o paciente, por favor, tente novamente');
-    return;
+    this.patientService.createPatient(newPatient).subscribe({
+      next: () => {
+        this.openConfirmDialog('Paciente Adicionado com Sucesso', 'O paciente foi adicionado com sucesso, clique para retornar à página de pacientes');
+      },
+      error: () => {
+        this.openConfirmDialog('Ocorreu um Erro', 'Ocorreu um erro ao adicionar o paciente, por favor, tente novamente');
+      }
+    });
   }
 
   public openConfirmDialog(title: string, description: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '500px',
       data: {
         title: title,
         description: description,
         confirmButtonText: 'OK',
         shouldShowCancelButton: false
-      },
-      position: { top: '10vh' }
+      }
     });
 
     dialogRef.afterClosed().subscribe(() => {

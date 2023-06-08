@@ -2,8 +2,22 @@
     <div class="row">
         <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
-            <input matInput placeholder="Rolando Ladeira" formControlName="name">
+            <input matInput placeholder="Rolando Ladeira" formControlName="fullName">
             <mat-error>Insira um nome</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput placeholder="444.444.444-44" formControlName="document">
+            <mat-error>Insira um CPF</mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input type="tel" matInput placeholder="(20) 99444-5555" formControlName="telephone">
+            <mat-error>{{ getTelephoneErrorMessage() }}</mat-error>
         </mat-form-field>
     </div>
     <div class="row">
@@ -14,10 +28,12 @@
         </mat-form-field>
     </div>
     <div class="row">
-        <mat-form-field appearance="outline">
-            <mat-label>Telefone</mat-label>
-            <input type="tel" matInput placeholder="(20) 99444-5555" formControlName="telephone">
-            <mat-error>{{ getTelephoneErrorMessage() }}</mat-error>
+        <mat-form-field>
+            <mat-label>Dia de Nascimento</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="birthDate">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
     </div>
     <div class="row">
@@ -35,13 +51,6 @@
             </mat-radio-button>
         </mat-radio-group>
         <mat-error *ngIf="!patientForm.get('gender').valid">Selecione um gênero</mat-error>
-    </div>
-    <div class="row">
-        <mat-form-field appearance="outline">
-            <mat-label>CPF</mat-label>
-            <input matInput placeholder="444.444.444-44" formControlName="cpf">
-            <mat-error>Insira um CPF</mat-error>
-        </mat-form-field>
     </div>
     <div class="row">
         <mat-form-field appearance="outline">

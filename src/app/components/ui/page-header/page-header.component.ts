@@ -11,7 +11,7 @@ export class PageHeaderComponent {
 
   constructor(public location: Location) { }
 
-  goBack(): void {
+  public goBack(): void {
     this.location.back();
   }
 }

@@ -3,7 +3,7 @@
         <div class="col-11">
             <div class="title">{{ title }}</div>
         </div>
-        <ng-container *ngIf="!location.isCurrentPathEqualTo('/home')">
+        <ng-container *ngIf="!location.isCurrentPathEqualTo('/home') && !location.isCurrentPathEqualTo('/')">
             <div class="col-1">
                 <div>
                     <button mat-button extended aria-label="Voltar" (click)="goBack()">

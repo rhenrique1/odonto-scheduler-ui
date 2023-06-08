@@ -14,36 +14,46 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 })
 
 export class PatientsPageComponent implements OnInit {
-  public displayedColumns: string[] = ['name', 'email', 'telephone', 'address', 'gender', 'cpf', 'notes', 'actions'];
-  public patients: Patient[] = [];
+  public displayedColumns: string[] = ['name', 'document', 'telephone', 'email', 'address', 'gender', 'notes', 'actions'];
+  public patients: Patient[];
   public isLoading: boolean = true;
+  public isLoadingPatients: boolean = true;
   public patientQuery: string = '';
 
-  @ViewChild(MatTable) table!: MatTable<Patient[]>;
+  // @ViewChild(MatTable) table: MatTable<Patient[]>;
 
-  constructor(public dialog: MatDialog, public patientService: PatientService, private router: Router) { }
+  constructor(
+    public dialog: MatDialog,
+    public patientService: PatientService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    //TODO: remove previous url if a patient was deleted
-    this.patients = this.patientService.getPatients();
-    this.table.renderRows();
-    this.isLoading = false;
+    this.fetchPatients();
+    // this.table.renderRows();
   }
 
   public openDeleteDialog(patient: Patient): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
-      width: '500px',
       data: {
         title: 'Remover Paciente',
-        description: `Tem certeza que deseja remover ${patient.name}?`,
+        description: `Tem certeza que deseja remover ${patient.fullName}?`,
         cancelButtonText: 'CANCELAR',
         confirmButtonText: 'REMOVER'
-      },
-      position: { top: '10vh' }
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`The dialog was closed with ${result} as the result`);
+      if (result) {
+        this.patientService.deletePatient(patient.id).subscribe({
+          next: () => {
+            this.fetchPatients();
+          },
+          error: () => {
+            console.log('Ocorreu um erro ao deletar o paciente');
+          }
+        })
+      }
     });
   }
 
@@ -51,20 +61,33 @@ export class PatientsPageComponent implements OnInit {
     this.router.navigate(['/editar-paciente', patient.id]);
   }
 
-  public fetchPatientsByQuery(): Patient[] {
-    return this.patientService.getPatients().filter(
-      p => p.name.includes(this.patientQuery)
-        || p.email.includes(this.patientQuery)
-        || p.cpf.includes(this.patientQuery)
-    );
-  }
+  // public fetchPatientsByQuery(): Patient[] {
+  //   this.patientService.getPatients().filter(
+  //     p => p.name.includes(this.patientQuery)
+  //       || p.email.includes(this.patientQuery)
+  //       || p.cpf.includes(this.patientQuery)
+  //   );
+  // }
 
   public fetchPatients(): void {
-    if (this.patientQuery === '') {
-      this.patients = this.patientService.getPatients();
-      return;
-    }
+    this.patientService.getPatients().subscribe({
+      next: (response) => {
+        if (this.patientQuery != '') {
+          this.patients = response.filter(p => p.fullName.includes(this.patientQuery)
+            || p.email.includes(this.patientQuery)
+            || p.document.includes(this.patientQuery));
+        } else {
+          this.patients = response;
+        }
 
-    this.patients = this.fetchPatientsByQuery();
+        this.isLoadingPatients = false;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.log(error);
+        this.isLoadingPatients = false;
+        this.isLoading = false;
+      }
+    });
   }
 }

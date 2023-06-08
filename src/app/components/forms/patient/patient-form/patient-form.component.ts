@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Patient } from 'src/app/shared/interfaces/patient';
 import { PatientService } from 'src/app/shared/services/patient.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 
 export class PatientFormComponent implements OnInit {
   @Input() isEditMode: boolean = false;
-  @Input() patientId: number = 0;
+  @Input() patientId: string = null;
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
 
@@ -34,27 +35,39 @@ export class PatientFormComponent implements OnInit {
 
   public initializeNewForm(): FormGroup {
     return this.formBuilder.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      fullName: ['', Validators.required],
+      document: ['', Validators.required],
       telephone: ['', [Validators.required, Validators.pattern('[- +()0-9]+')]],
+      email: ['', [Validators.required, Validators.email]],
+      birthDate: [new Date(), [Validators.required]],
       address: ['', Validators.required],
       gender: ['', Validators.required],
-      cpf: ['', Validators.required],
       notes: ['']
     });
   }
 
   public initializeUpdateForm(): FormGroup {
-    const patientData = this.patientService.getPatient(this.patientId);
+    this.isLoading = true;
+    let patient: Patient;
+
+    this.patientService.getPatient(this.patientId).subscribe({
+      next: (response) => {
+        patient = response;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
 
     return this.formBuilder.group({
-      name: [patientData.name, Validators.required],
-      email: [patientData.email, [Validators.required, Validators.email]],
-      telephone: [patientData.telephone, [Validators.required, Validators.pattern('[- +()0-9]+')]],
-      address: [patientData.address, Validators.required],
-      gender: [patientData.gender, Validators.required],
-      cpf: [patientData.cpf, Validators.required],
-      notes: [patientData.notes]
+      fullName: [patient.fullName, Validators.required],
+      document: [patient.document, Validators.required],
+      telephone: [patient.telephone, [Validators.required, Validators.pattern('[- +()0-9]+')]],
+      email: [patient.email, [Validators.required, Validators.email]],
+      birthDate: [patient.birthDate, Validators.required],
+      address: [patient.address, Validators.required],
+      gender: [patient.gender, Validators.required],
+      notes: [patient.notes]
     });
   }
 
