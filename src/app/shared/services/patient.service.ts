@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PatientService {
   private readonly url: string = 'http://ec2-54-84-29-231.compute-1.amazonaws.com:8080/odontoscheduler/api/patient';

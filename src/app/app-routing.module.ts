@@ -9,19 +9,19 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 const routes: Routes = [
   {
     path: '',
-    component: HomePageComponent
+    component: HomePageComponent,
   },
   {
     path: 'home',
-    component: HomePageComponent
+    component: HomePageComponent,
   },
   {
     path: 'pacientes',
-    component: PatientsPageComponent
+    component: PatientsPageComponent,
   },
   {
     path: 'novo-paciente',
-    component: AddPatientPageComponent
+    component: AddPatientPageComponent,
   },
   {
     path: 'editar-paciente/:id',
@@ -29,14 +29,12 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginPageComponent
-  }
+    component: LoginPageComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule {
-
-}
+export class AppRoutingModule { }

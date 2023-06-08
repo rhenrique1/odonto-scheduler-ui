@@ -6,30 +6,32 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 @Component({
   selector: 'app-patient-form',
   templateUrl: './patient-form.component.html',
-  styleUrls: ['./patient-form.component.scss']
+  styleUrls: ['./patient-form.component.scss'],
 })
-
 export class PatientFormComponent implements OnInit {
-  @Input() isEditMode: boolean = false;
-  @Input() patientId: string = null;
+  @Input() isEditMode = false;
+  @Input() patientId = '';
   @Output() onSubmit = new EventEmitter();
   @Output() onCancel = new EventEmitter();
 
-  public genders: string[] = [
-    "Masculino", "Feminino"
-  ]
+  public genders: string[] = ['Masculino', 'Feminino'];
 
-  public isLoading: boolean = true;
+  public isLoading = true;
   public patientForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private patientService: PatientService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private patientService: PatientService
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
   }
 
   public initializeForm() {
-    this.patientForm = this.isEditMode ? this.initializeUpdateForm() : this.initializeNewForm();
+    this.patientForm = this.isEditMode
+      ? this.initializeUpdateForm()
+      : this.initializeNewForm();
     this.isLoading = false;
   }
 
@@ -42,7 +44,7 @@ export class PatientFormComponent implements OnInit {
       birthDate: [new Date(), [Validators.required]],
       address: ['', Validators.required],
       gender: ['', Validators.required],
-      notes: ['']
+      notes: [''],
     });
   }
 
@@ -51,23 +53,26 @@ export class PatientFormComponent implements OnInit {
     let patient: Patient;
 
     this.patientService.getPatient(this.patientId).subscribe({
-      next: (response) => {
+      next: response => {
         patient = response;
       },
-      error: (error) => {
+      error: error => {
         console.log(error);
-      }
+      },
     });
 
     return this.formBuilder.group({
       fullName: [patient.fullName, Validators.required],
       document: [patient.document, Validators.required],
-      telephone: [patient.telephone, [Validators.required, Validators.pattern('[- +()0-9]+')]],
+      telephone: [
+        patient.telephone,
+        [Validators.required, Validators.pattern('[- +()0-9]+')],
+      ],
       email: [patient.email, [Validators.required, Validators.email]],
       birthDate: [patient.birthDate, Validators.required],
       address: [patient.address, Validators.required],
       gender: [patient.gender, Validators.required],
-      notes: [patient.notes]
+      notes: [patient.notes],
     });
   }
 
@@ -76,7 +81,9 @@ export class PatientFormComponent implements OnInit {
       return 'Insira um email';
     }
 
-    return this.patientForm.get('email').hasError('email') ? 'Insira um email válido' : '';
+    return this.patientForm.get('email').hasError('email')
+      ? 'Insira um email válido'
+      : '';
   }
 
   public getTelephoneErrorMessage(): string {
@@ -84,12 +91,14 @@ export class PatientFormComponent implements OnInit {
       return 'Insira um telefone';
     }
 
-    return this.patientForm.get('telephone').hasError('pattern') ? 'Insira um telefone válido' : '';
+    return this.patientForm.get('telephone').hasError('pattern')
+      ? 'Insira um telefone válido'
+      : '';
   }
 
   public onSubmitPatient(): void {
     if (this.patientForm.valid) {
-      this.onSubmit.emit(this.patientForm.value)
+      this.onSubmit.emit(this.patientForm.value);
     }
   }
 }

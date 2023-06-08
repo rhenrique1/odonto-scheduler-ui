@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 //ANGULAR MATERIAL MODULES
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -22,7 +22,10 @@ import { DEFAULT_DIALOG_CONFIG } from '@angular/cdk/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from '@angular/material/snack-bar';
+import {
+  MAT_SNACK_BAR_DEFAULT_OPTIONS,
+  MatSnackBarModule,
+} from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -49,6 +52,7 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { AuthComponent } from './auth/auth.component';
 import { AuthCardComponent } from './auth/auth-card/auth-card.component';
+import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -94,16 +98,22 @@ import { AuthCardComponent } from './auth/auth-card/auth-card.component';
     MatDatepickerModule,
     MatNativeDateModule,
   ],
-  providers:
-    [
-      HttpClientModule,
-      {
-        provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500, horizontalPosition: 'center', verticalPosition: 'top' },
+  providers: [
+    HttpClientModule,
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+      useValue: {
+        duration: 2500,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
       },
-      {
-        provide: DEFAULT_DIALOG_CONFIG, useValue: { hasBackdrop: true, width: '500px', position: { top: '10vh' } }
-      }
-    ],
-  bootstrap: [AppComponent]
+    },
+    {
+      provide: DEFAULT_DIALOG_CONFIG,
+      useValue: { hasBackdrop: true, width: '500px', position: { top: '10vh' } },
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

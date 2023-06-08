@@ -30,6 +30,7 @@
     <div class="row">
         <mat-form-field>
             <mat-label>Dia de Nascimento</mat-label>
+            <!-- TODO: add current date limit / force BR date format -->
             <input matInput [matDatepicker]="picker" formControlName="birthDate">
             <mat-hint>MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>

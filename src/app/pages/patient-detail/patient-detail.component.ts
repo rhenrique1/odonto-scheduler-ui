@@ -9,18 +9,16 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 @Component({
   selector: 'app-patient-detail',
   templateUrl: './patient-detail.component.html',
-  styleUrls: ['./patient-detail.component.scss']
+  styleUrls: ['./patient-detail.component.scss'],
 })
-
 export class PatientDetailComponent {
-  public isEditModeOn: boolean = false;
+  public isEditModeOn = false;
   public patient: Patient;
   public patientId: string = null;
-  public genders: string[] = [
-    "Masculino", "Feminino"
-  ]
+  public genders: string[] = ['Masculino', 'Feminino'];
 
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private patientService: PatientService,
     public dialog: MatDialog
@@ -33,12 +31,12 @@ export class PatientDetailComponent {
     });
 
     this.patientService.getPatient(this.patientId).subscribe({
-      next: (response) => {
+      next: response => {
         this.patient = response;
       },
-      error: (error) => {
+      error: error => {
         console.log(error);
-      }
+      },
     });
   }
 
@@ -56,8 +54,8 @@ export class PatientDetailComponent {
         title: 'Remover Paciente',
         description: `Tem certeza que deseja remover ${this.patient.fullName}?`,
         cancelButtonText: 'CANCELAR',
-        confirmButtonText: 'REMOVER'
-      }
+        confirmButtonText: 'REMOVER',
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -69,7 +67,7 @@ export class PatientDetailComponent {
           error: () => {
             console.log('Ocorreu um erro ao deletar o paciente');
             this.router.navigateByUrl('/pacientes');
-          }
+          },
         });
       }
     });
@@ -80,11 +78,17 @@ export class PatientDetailComponent {
 
     this.patientService.updatePatient(editPatientData).subscribe({
       next: () => {
-        this.openConfirmDialog('Paciente Atualizado com Sucesso', 'O paciente foi atualizado com sucesso, clique para retornar à página de pacientes');
+        this.openConfirmDialog(
+          'Paciente Atualizado com Sucesso',
+          'O paciente foi atualizado com sucesso, clique para retornar à página de pacientes'
+        );
       },
       error: () => {
-        this.openConfirmDialog('Erro', 'Ocorreu um problema ao atualizar o paciente, clique para retornar à página de pacientes e tente novamente');
-      }
+        this.openConfirmDialog(
+          'Erro',
+          'Ocorreu um problema ao atualizar o paciente, clique para retornar à página de pacientes e tente novamente'
+        );
+      },
     });
   }
 
@@ -94,8 +98,8 @@ export class PatientDetailComponent {
         title: title,
         description: description,
         confirmButtonText: 'OK',
-        shouldShowCancelButton: false
-      }
+        shouldShowCancelButton: false,
+      },
     });
 
     dialogRef.afterClosed().subscribe(() => {

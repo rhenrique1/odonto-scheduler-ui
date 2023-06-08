@@ -9,22 +9,25 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+  styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent {
-  public hidePassword: boolean = true;
-  public isLoginMode: boolean = true;
-  public isLoading: boolean = false;
+  public hidePassword = true;
+  public isLoginMode = true;
+  public isLoading = false;
   public error: string = null;
 
-  constructor(private authService: AuthService, private snackBar: MatSnackBar, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) { }
 
   public onSwitchMode(): void {
     this.isLoginMode = !this.isLoginMode;
   }
 
   public onSubmit(form: NgForm): void {
-
     if (!form.valid) {
       return;
     }
@@ -36,7 +39,7 @@ export class AuthComponent {
       name: form.value.fullName,
       document: form.value.document,
       phoneNumber: form.value.phoneNumber,
-    }
+    };
 
     let authObs: Observable<AuthResponseData>;
 
@@ -51,13 +54,14 @@ export class AuthComponent {
     authObs.subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/home'])
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.error = error.message;
+        console.log(error)
         this.openSnackBar();
         this.isLoading = false;
-      }
+      },
     });
 
     form.reset();
@@ -69,7 +73,7 @@ export class AuthComponent {
         message: this.error,
         className: 'toast-error',
       },
-      panelClass: ['error-snackbar']
+      panelClass: ['error-snackbar'],
     });
   }
 }
