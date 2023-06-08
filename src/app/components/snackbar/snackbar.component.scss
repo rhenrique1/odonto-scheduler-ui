@@ -1,3 +1,7 @@
+:host {
+  display: flex;
+}
+
 .toast-success,
 .toast-error {
   color: var(--white-color) !important;
