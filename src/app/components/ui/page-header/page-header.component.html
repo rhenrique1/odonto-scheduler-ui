@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="d-flex justify-content-between">
+        <div class="col-11">
+            <div class="title">{{ title }}</div>
+        </div>
+        <ng-container *ngIf="!location.isCurrentPathEqualTo('/home') && !location.isCurrentPathEqualTo('/')">
+            <div class="col-1">
+                <div>
+                    <button mat-button extended aria-label="Voltar" (click)="goBack()">
+                        <mat-icon style="height: 1.1rem !important;">arrow_back</mat-icon>
+                        VOLTAR
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

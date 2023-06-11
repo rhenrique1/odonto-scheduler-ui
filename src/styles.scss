@@ -1,4 +1,54 @@
-/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+  background-color: rgb(250, 250, 250);
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mt-6 {
+  margin-top: 4rem !important;
+}
+
+.mt-12 {
+  margin-top: 12rem !important;
+}
+
+.material-green {
+  background-color: #61dda0 !important;
+  color: #000000 !important;
+}
+
+.cancel-grey {
+  background-color: #515151 !important;
+  color: #ffffff !important;
+}
+
+.border {
+  border: 1px solid black !important;
+}
+
+:root {
+  --primary-color: #153d77;
+  --secondary-color: #6c757d;
+  --white-color: #fff;
+  --success-color: #198754;
+  --delete-color: #dc3545;
+  --background-color: #f2f2f2;
+}
+
+.success-snackbar {
+  color: white;
+  --mdc-snackbar-container-color: var(--success-color);
+  --mat-mdc-snack-bar-button-color: var(--white-color);
+}
+
+.error-snackbar {
+  color: white;
+  --mdc-snackbar-container-color: var(--delete-color);
+  --mat-mdc-snack-bar-button-color: var(--white-color);
+}

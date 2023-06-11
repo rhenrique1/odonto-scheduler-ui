@@ -1,1 +1,6 @@
-<router-outlet></router-outlet>
+<ng-container *ngIf="!location.isCurrentPathEqualTo('/login')">
+    <app-nav></app-nav>
+</ng-container>
+<div class="container mt-6">
+    <router-outlet></router-outlet>
+</div>

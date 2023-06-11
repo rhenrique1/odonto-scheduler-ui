@@ -1,0 +1,9 @@
+<div class="container mx-auto mt-3">
+    <app-page-header title="Detalhes do Paciente"></app-page-header>
+    <mat-card>
+        <mat-card-content class="m-3">
+            <app-patient-form [isEditMode]="true" (onSubmit)="submitPatient($event)" (onDelete)="deletePatient()"
+                [patientId]="patientId"></app-patient-form>
+        </mat-card-content>
+    </mat-card>
+</div>

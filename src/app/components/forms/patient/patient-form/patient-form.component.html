@@ -1,0 +1,101 @@
+<form *ngIf="!isLoading" [formGroup]="patientForm" (ngSubmit)="onSubmitPatient()">
+    <div class="form-container">
+        <div class="row">
+            <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput placeholder="Rolando Ladeira" formControlName="fullName">
+                <mat-error>Insira um nome</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>CPF</mat-label>
+                <input matInput placeholder="444.444.444-44" formControlName="document">
+                <mat-error>Insira um CPF</mat-error>
+            </mat-form-field>
+            <mat-form-field class="patient-form-input" appearance="outline" style="width: 50% !important">
+                <mat-label>Telefone</mat-label>
+                <input type="tel" matInput placeholder="(20) 99444-5555" formControlName="phoneNumber">
+                <mat-error>{{ getTelephoneErrorMessage() }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput placeholder="exemplo@exemplo.com" formControlName="email">
+                <mat-error>{{ getEmailErrorMessage() }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="patient-form-input">
+                <mat-label>Dia de Nascimento</mat-label>
+                <input matInput [matDatepicker]="picker" [max]="maxBirthDate" formControlName="birthDate">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-label>Gênero</mat-label>
+            <mat-radio-group color="primary" aria-label="Gênero" formControlName="gender">
+                <mat-radio-button *ngFor="let gender of genders" [value]="gender">
+                    {{ gender }}
+                </mat-radio-button>
+            </mat-radio-group>
+            <mat-error *ngIf="!patientForm.get('gender').valid">Selecione um gênero</mat-error>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="outline">
+                <mat-label>Observações</mat-label>
+                <textarea matInput placeholder="Paciente tem 7 dentes faltando" rows="8"
+                    formControlName="notes"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>CEP</mat-label>
+                <input matInput placeholder="Parque das Laranjeiras" formControlName="zipcode">
+                <mat-error>Insira o CEP</mat-error>
+            </mat-form-field>
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Endereço</mat-label>
+                <input matInput placeholder="Rua dos Limões" formControlName="street">
+                <mat-error>Insira o endereço</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Bairro</mat-label>
+                <input matInput placeholder="Parque das Águas" formControlName="neighborhood">
+                <mat-error>Insira o bairro</mat-error>
+            </mat-form-field>
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Número</mat-label>
+                <input matInput placeholder="1200" formControlName="number">
+                <mat-error>Insira o número</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Cidade</mat-label>
+                <input matInput placeholder="São Paulo" formControlName="city">
+                <mat-error>Insira a cidade</mat-error>
+            </mat-form-field>
+            <mat-form-field class="patient-form-input" appearance="outline">
+                <mat-label>Estado</mat-label>
+                <input matInput placeholder="Parque das Laranjeiras" formControlName="state">
+                <mat-error>Insira o estado</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <div class="col d-flex justify-content-end">
+                <ng-container *ngIf="isEditMode">
+                    <button mat-flat-button class="ms-3" color="primary" type="button" (click)="onDeletePatient()">
+                        REMOVER
+                    </button>
+                </ng-container>
+                <button mat-flat-button class="ms-3" color="primary" type="submit" [disabled]="!patientForm.valid">
+                    {{ isEditMode ? 'ATUALIZAR' : 'ADICIONAR' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
