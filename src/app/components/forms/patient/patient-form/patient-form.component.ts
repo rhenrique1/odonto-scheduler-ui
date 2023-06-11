@@ -5,56 +5,83 @@ import { PatientService } from 'src/app/shared/services/patient.service';
 @Component({
   selector: 'app-patient-form',
   templateUrl: './patient-form.component.html',
-  styleUrls: ['./patient-form.component.scss']
+  styleUrls: ['./patient-form.component.scss'],
 })
-
 export class PatientFormComponent implements OnInit {
   @Input() isEditMode: boolean = false;
-  @Input() patientId: number = 0;
+  @Input() patientId: string = '';
   @Output() onSubmit = new EventEmitter();
-  @Output() onCancel = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
 
-  public genders: string[] = [
-    "Masculino", "Feminino"
-  ]
+  public genders: string[] = ['MASCULINO', 'FEMININO'];
 
+  public maxBirthDate: Date = new Date();
   public isLoading: boolean = true;
   public patientForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private patientService: PatientService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private patientService: PatientService
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
   }
 
-  public initializeForm() {
-    this.patientForm = this.isEditMode ? this.initializeUpdateForm() : this.initializeNewForm();
+  public initializeForm(): void {
+    this.isEditMode
+      ? this.initializeUpdateForm()
+      : this.initializeNewForm();
+  }
+
+  public initializeNewForm(): void {
+    this.patientForm = this.formBuilder.group({
+      fullName: ['', Validators.required],
+      document: ['', Validators.required],
+      phoneNumber: ['', [Validators.required, Validators.pattern('[- +()0-9]+')]],
+      email: ['', [Validators.required, Validators.email]],
+      birthDate: [new Date(), [Validators.required]],
+      gender: ['', Validators.required],
+      notes: [''],
+      zipcode: ['', Validators.required],
+      street: ['', Validators.required],
+      neighborhood: ['', Validators.required],
+      number: ['', Validators.required],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+    });
+
     this.isLoading = false;
   }
 
-  public initializeNewForm(): FormGroup {
-    return this.formBuilder.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      telephone: ['', [Validators.required, Validators.pattern('[- +()0-9]+')]],
-      address: ['', Validators.required],
-      gender: ['', Validators.required],
-      cpf: ['', Validators.required],
-      notes: ['']
-    });
-  }
+  public initializeUpdateForm(): void {
+    this.isLoading = true;
 
-  public initializeUpdateForm(): FormGroup {
-    const patientData = this.patientService.getPatient(this.patientId);
-
-    return this.formBuilder.group({
-      name: [patientData.name, Validators.required],
-      email: [patientData.email, [Validators.required, Validators.email]],
-      telephone: [patientData.telephone, [Validators.required, Validators.pattern('[- +()0-9]+')]],
-      address: [patientData.address, Validators.required],
-      gender: [patientData.gender, Validators.required],
-      cpf: [patientData.cpf, Validators.required],
-      notes: [patientData.notes]
+    this.patientService.getPatient(this.patientId).subscribe({
+      next: response => {
+        this.patientForm = this.formBuilder.group({
+          fullName: [response.fullName, Validators.required],
+          document: [response.document, Validators.required],
+          phoneNumber: [
+            response.phoneNumber,
+            [Validators.required, Validators.pattern('[- +()0-9]+')],
+          ],
+          email: [response.email, [Validators.required, Validators.email]],
+          birthDate: [response.birthDate, Validators.required],
+          gender: [response.gender, Validators.required],
+          notes: [response.notes],
+          zipcode: [response.address.zipcode, Validators.required],
+          street: [response.address.street, Validators.required],
+          neighborhood: [response.address.neighborhood, Validators.required],
+          number: [response.address.number, Validators.required],
+          city: [response.address.city, Validators.required],
+          state: [response.address.state, Validators.required],
+        });
+        this.isLoading = false;
+      },
+      error: error => {
+        this.isLoading = false;
+      },
     });
   }
 
@@ -63,20 +90,28 @@ export class PatientFormComponent implements OnInit {
       return 'Insira um email';
     }
 
-    return this.patientForm.get('email').hasError('email') ? 'Insira um email válido' : '';
+    return this.patientForm.get('email').hasError('email')
+      ? 'Insira um email válido'
+      : '';
   }
 
   public getTelephoneErrorMessage(): string {
-    if (this.patientForm.get('telephone').hasError('required')) {
+    if (this.patientForm.get('phoneNumber').hasError('required')) {
       return 'Insira um telefone';
     }
 
-    return this.patientForm.get('telephone').hasError('pattern') ? 'Insira um telefone válido' : '';
+    return this.patientForm.get('phoneNumber').hasError('pattern')
+      ? 'Insira um telefone válido'
+      : '';
   }
 
   public onSubmitPatient(): void {
     if (this.patientForm.valid) {
-      this.onSubmit.emit(this.patientForm.value)
+      this.onSubmit.emit(this.patientForm.value);
     }
+  }
+
+  public onDeletePatient(): void {
+    this.onDelete.emit();
   }
 }

@@ -1,0 +1,9 @@
+<span matSnackBarLabel>
+  {{data.message}}
+</span>
+<span matSnackBarActions>
+  <button *ngIf="data.className === 'toast-error'" mat-icon-button matSnackBarAction
+    (click)="snackBarRef.dismissWithAction()">
+    <mat-icon>error</mat-icon>
+  </button>
+</span>

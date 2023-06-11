@@ -1,10 +1,13 @@
+import { Address } from './address';
+
 export interface Patient {
-    id?: number;
-    name: string;
-    email: string;
-    telephone: string;
-    address: string;
-    gender: string;
-    cpf: string;
-    notes: string;
+  id?: string;
+  fullName: string;
+  document: string;
+  phoneNumber: string;
+  gender: string;
+  notes?: string;
+  email: string;
+  birthDate: Date;
+  address: Address;
 }

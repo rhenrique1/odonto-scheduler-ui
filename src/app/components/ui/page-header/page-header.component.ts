@@ -4,14 +4,14 @@ import { Location } from '@angular/common';
 @Component({
   selector: 'app-page-header',
   templateUrl: './page-header.component.html',
-  styleUrls: ['./page-header.component.scss']
+  styleUrls: ['./page-header.component.scss'],
 })
 export class PageHeaderComponent {
-  @Input() public title: string = '';
+  @Input() public title = '';
 
   constructor(public location: Location) { }
 
-  goBack(): void {
+  public goBack(): void {
     this.location.back();
   }
 }

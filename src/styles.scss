@@ -1,4 +1,4 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
 html,
 body {
@@ -19,15 +19,36 @@ body {
 }
 
 .material-green {
-  background-color: #61DDA0 !important;
+  background-color: #61dda0 !important;
   color: #000000 !important;
 }
 
 .cancel-grey {
   background-color: #515151 !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .border {
   border: 1px solid black !important;
+}
+
+:root {
+  --primary-color: #153d77;
+  --secondary-color: #6c757d;
+  --white-color: #fff;
+  --success-color: #198754;
+  --delete-color: #dc3545;
+  --background-color: #f2f2f2;
+}
+
+.success-snackbar {
+  color: white;
+  --mdc-snackbar-container-color: var(--success-color);
+  --mat-mdc-snack-bar-button-color: var(--white-color);
+}
+
+.error-snackbar {
+  color: white;
+  --mdc-snackbar-container-color: var(--delete-color);
+  --mat-mdc-snack-bar-button-color: var(--white-color);
 }
