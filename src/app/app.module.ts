@@ -52,6 +52,8 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { AuthComponent } from './auth/auth.component';
 import { AuthCardComponent } from './auth/auth-card/auth-card.component';
+
+//INTERCEPTORS
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 @NgModule({

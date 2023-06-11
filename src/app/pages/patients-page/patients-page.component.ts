@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTable } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, fromEvent, tap } from 'rxjs';
 import { DeleteDialogComponent } from 'src/app/components/dialog/delete-dialog/delete-dialog.component';
+import { PatientsDataSource } from 'src/app/components/tables/patients-data-source';
 import { Patient } from 'src/app/shared/interfaces/patient';
 import { PatientService } from 'src/app/shared/services/patient.service';
 
@@ -11,7 +13,7 @@ import { PatientService } from 'src/app/shared/services/patient.service';
   templateUrl: './patients-page.component.html',
   styleUrls: ['./patients-page.component.scss'],
 })
-export class PatientsPageComponent implements OnInit {
+export class PatientsPageComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [
     'name',
     'document',
@@ -22,12 +24,14 @@ export class PatientsPageComponent implements OnInit {
     'notes',
     'actions',
   ];
-  public patients: Patient[];
+
+  public dataSource: PatientsDataSource;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('searchInput') searchInput: ElementRef;
+
   public isLoading = true;
   public isLoadingPatients = true;
   public patientQuery = '';
-
-  // @ViewChild(MatTable) table: MatTable<Patient[]>;
 
   constructor(
     public dialog: MatDialog,
@@ -36,8 +40,23 @@ export class PatientsPageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.fetchPatients();
-    // this.table.renderRows();
+    this.dataSource = new PatientsDataSource(this.patientService);
+    this.dataSource.loadPatients();
+  }
+
+  ngAfterViewInit(): void {
+    fromEvent(this.searchInput.nativeElement, 'keyup')
+      .pipe(
+        debounceTime(150),
+        distinctUntilChanged(),
+        tap(() => {
+          this.paginator.pageIndex = 0;
+          this.loadPatientsPage();
+        })
+      )
+      .subscribe();
+
+    this.paginator.page.pipe(tap(() => this.loadPatientsPage())).subscribe();
   }
 
   public openDeleteDialog(patient: Patient): void {
@@ -54,10 +73,9 @@ export class PatientsPageComponent implements OnInit {
       if (result) {
         this.patientService.deletePatient(patient.id).subscribe({
           next: () => {
-            this.fetchPatients();
+            this.loadPatientsPage();
           },
           error: () => {
-            console.log('Ocorreu um erro ao deletar o paciente');
           },
         });
       }
@@ -68,36 +86,11 @@ export class PatientsPageComponent implements OnInit {
     this.router.navigate(['/editar-paciente', patient.id]);
   }
 
-  // public fetchPatientsByQuery(): Patient[] {
-  //   this.patientService.getPatients().filter(
-  //     p => p.name.includes(this.patientQuery)
-  //       || p.email.includes(this.patientQuery)
-  //       || p.cpf.includes(this.patientQuery)
-  //   );
-  // }
-
-  public fetchPatients(): void {
-    this.patientService.getPatients().subscribe({
-      next: response => {
-        if (this.patientQuery != '') {
-          this.patients = response.filter(
-            p =>
-              p.fullName.includes(this.patientQuery) ||
-              p.email.includes(this.patientQuery) ||
-              p.document.includes(this.patientQuery)
-          );
-        } else {
-          this.patients = response;
-        }
-
-        this.isLoadingPatients = false;
-        this.isLoading = false;
-      },
-      error: error => {
-        console.log(error);
-        this.isLoadingPatients = false;
-        this.isLoading = false;
-      },
-    });
+  public loadPatientsPage(): void {
+    this.dataSource.loadPatients(
+      this.searchInput.nativeElement.value,
+      this.paginator.pageIndex,
+      this.paginator.pageSize
+    );
   }
 }

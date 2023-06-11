@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/dialog/confirm-dialog/confirm-dialog.component';
+import { Address } from 'src/app/shared/interfaces/address';
 import { Patient } from 'src/app/shared/interfaces/patient';
 import { PatientService } from 'src/app/shared/services/patient.service';
 
@@ -17,14 +18,21 @@ export class AddPatientPageComponent {
     private router: Router
   ) { }
 
-  public submitPatient(newPatientData: Patient): void {
+  public submitPatient(newPatientData: any): void {
     const newPatient: Patient = {
       document: newPatientData.document,
-      telephone: newPatientData.telephone,
+      phoneNumber: newPatientData.phoneNumber,
       email: newPatientData.email,
       fullName: newPatientData.fullName,
       birthDate: newPatientData.birthDate,
-      address: newPatientData.address,
+      address: new Address(
+        newPatientData.street,
+        newPatientData.neighborhood,
+        newPatientData.number,
+        newPatientData.zipcode,
+        newPatientData.city,
+        newPatientData.state
+      ),
       gender: newPatientData.gender,
       notes: newPatientData.notes
     }

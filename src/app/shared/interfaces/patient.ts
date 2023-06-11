@@ -4,10 +4,10 @@ export interface Patient {
   id?: string;
   fullName: string;
   document: string;
-  telephone: string;
+  phoneNumber: string;
+  gender: string;
+  notes?: string;
   email: string;
   birthDate: Date;
   address: Address;
-  gender: string;
-  notes: string;
 }

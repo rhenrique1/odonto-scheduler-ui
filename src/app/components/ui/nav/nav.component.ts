@@ -7,8 +7,6 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent {
-  public isAuthenticated: boolean = false;
-
   constructor(public authService: AuthService) { }
 
   public onLogout(): void {

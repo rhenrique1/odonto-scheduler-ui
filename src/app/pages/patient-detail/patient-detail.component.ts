@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/dialog/confirm-dialog/confirm-dialog.component';
 import { DeleteDialogComponent } from 'src/app/components/dialog/delete-dialog/delete-dialog.component';
+import { Address } from 'src/app/shared/interfaces/address';
 import { Patient } from 'src/app/shared/interfaces/patient';
 import { PatientService } from 'src/app/shared/services/patient.service';
 
@@ -12,10 +13,10 @@ import { PatientService } from 'src/app/shared/services/patient.service';
   styleUrls: ['./patient-detail.component.scss'],
 })
 export class PatientDetailComponent {
+  public isLoading = true;
   public isEditModeOn = false;
-  public patient: Patient;
-  public patientId: string = null;
-  public genders: string[] = ['Masculino', 'Feminino'];
+  public patientId: string = '';
+  public genders: string[] = ['MASCULINO', 'FEMININO'];
 
   constructor(
     private router: Router,
@@ -25,18 +26,9 @@ export class PatientDetailComponent {
   ) { }
 
   public ngOnInit(): void {
-    //TODO: redirect user if patient no longer exists
     this.route.params.subscribe((params: Params) => {
       this.patientId = params['id'];
-    });
-
-    this.patientService.getPatient(this.patientId).subscribe({
-      next: response => {
-        this.patient = response;
-      },
-      error: error => {
-        console.log(error);
-      },
+      this.isLoading = false;
     });
   }
 
@@ -52,7 +44,7 @@ export class PatientDetailComponent {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
       data: {
         title: 'Remover Paciente',
-        description: `Tem certeza que deseja remover ${this.patient.fullName}?`,
+        description: 'Tem certeza que deseja remover este paciente?',
         cancelButtonText: 'CANCELAR',
         confirmButtonText: 'REMOVER',
       },
@@ -65,7 +57,6 @@ export class PatientDetailComponent {
             this.router.navigateByUrl('/pacientes');
           },
           error: () => {
-            console.log('Ocorreu um erro ao deletar o paciente');
             this.router.navigateByUrl('/pacientes');
           },
         });
@@ -73,22 +64,63 @@ export class PatientDetailComponent {
     });
   }
 
-  public submitPatient(editPatientData: Patient): void {
-    editPatientData.id = this.patientId;
+  public submitPatient(editPatientData: any): void {
+    const updatedPatient: Patient = {
+      id: this.patientId,
+      document: editPatientData.document,
+      phoneNumber: editPatientData.phoneNumber,
+      email: editPatientData.email,
+      fullName: editPatientData.fullName,
+      birthDate: editPatientData.birthDate,
+      address: new Address(
+        editPatientData.street,
+        editPatientData.neighborhood,
+        editPatientData.number,
+        editPatientData.zipcode,
+        editPatientData.city,
+        editPatientData.state
+      ),
+      gender: editPatientData.gender,
+      notes: editPatientData.notes
+    }
 
-    this.patientService.updatePatient(editPatientData).subscribe({
+    this.patientService.updatePatient(updatedPatient).subscribe({
       next: () => {
-        this.openConfirmDialog(
-          'Paciente Atualizado com Sucesso',
-          'O paciente foi atualizado com sucesso, clique para retornar à página de pacientes'
-        );
+        this.goToPatients();
       },
       error: () => {
         this.openConfirmDialog(
           'Erro',
-          'Ocorreu um problema ao atualizar o paciente, clique para retornar à página de pacientes e tente novamente'
+          'Ocorreu um problema ao atualizar o paciente, clique para retornar até a página de pacientes e tente novamente'
         );
       },
+    });
+  }
+
+  public deletePatient(): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+      data: {
+        title: 'Remover Paciente',
+        description: `Tem certeza que deseja remover este paciente?`,
+        cancelButtonText: 'CANCELAR',
+        confirmButtonText: 'REMOVER',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.patientService.deletePatient(this.patientId).subscribe({
+          next: () => {
+            this.goToPatients();
+          },
+          error: () => {
+            this.openConfirmDialog(
+              'Erro',
+              'Ocorreu um problema ao remover o paciente, clique para retornar até a página de pacientes e tente novamente'
+            );
+          },
+        });
+      }
     });
   }
 
