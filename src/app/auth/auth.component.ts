@@ -34,11 +34,8 @@ export class AuthComponent {
 
     const auth: AuthRequestData = {
       username: form.value.username,
-      email: form.value.email,
       password: form.value.password,
-      name: form.value.fullName,
-      document: form.value.document,
-      phoneNumber: form.value.phoneNumber,
+      fullName: form.value.fullName,
     };
 
     let authObs: Observable<AuthResponseData>;
@@ -58,7 +55,6 @@ export class AuthComponent {
       },
       error: (error) => {
         this.error = error.message;
-        console.log(error)
         this.openSnackBar();
         this.isLoading = false;
       },

@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   Observable,
@@ -12,11 +12,8 @@ import { Router } from '@angular/router';
 
 export interface AuthRequestData {
   username: string;
-  email: string;
   password: string;
-  name: string;
-  document: string;
-  phoneNumber: string;
+  fullName: string;
 }
 export interface AuthResponseData {
   userId: string;
@@ -49,10 +46,10 @@ export class AuthService {
         catchError(this.handleError),
         tap(response => {
           this.handleAuthentication(
-            response.username,
             response.userId,
-            response.accessToken,
-            response.accessTokenExpiresIn
+            response.username,
+            response.accessTokenExpiresIn,
+            response.accessToken
           );
         })
       );
@@ -68,21 +65,21 @@ export class AuthService {
         catchError(this.handleError),
         tap(response => {
           this.handleAuthentication(
-            response.username,
             response.userId,
-            response.accessToken,
-            response.accessTokenExpiresIn
+            response.username,
+            response.accessTokenExpiresIn,
+            response.accessToken
           );
         })
       );
   }
 
-  public autoLogin() {
+  public autoLogin(): void {
     const userData: {
-      username: string;
       userId: string;
+      username: string;
+      tokenExpirationDate: string;
       _token: string;
-      expiresIn: string;
     } = JSON.parse(localStorage.getItem('userData'));
 
     if (!userData) {
@@ -90,16 +87,16 @@ export class AuthService {
     }
 
     const loadedUser = new User(
-      userData.username,
       userData.userId,
+      userData.username,
+      new Date(userData.tokenExpirationDate),
       userData._token,
-      new Date(userData.expiresIn)
     );
 
-    if (loadedUser.token) {
+    if (userData._token) {
       this.user.next(loadedUser);
       const expirationDuration =
-        new Date(userData.expiresIn).getTime() -
+        new Date(userData.tokenExpirationDate).getTime() -
         new Date().getTime();
 
       this.autoLogout(expirationDuration);
@@ -125,12 +122,12 @@ export class AuthService {
   }
 
   private handleAuthentication(
-    username: string,
     userId: string,
+    username: string,
+    expiresIn: string,
     token: string,
-    expiresIn: string
   ): void {
-    const user = new User(username, userId, token, new Date(expiresIn));
+    const user = new User(userId, username, new Date(expiresIn), token);
 
     this.user.next(user);
     this.autoLogout(new Date(expiresIn).getTime() - new Date().getTime());
@@ -148,8 +145,6 @@ export class AuthService {
       case 'EMAIL_EXISTS':
         errorMessage = 'Esse email já está cadastrado.';
         break;
-
-      //TODO: add more cases when the backend is actually finished
     }
 
     return throwError(() => new Error(errorMessage));
