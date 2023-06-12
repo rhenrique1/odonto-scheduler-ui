@@ -8,7 +8,7 @@ import { getPaginationHeaders } from '../helpers/paginationHelper';
   providedIn: 'root',
 })
 export class PatientService {
-  private readonly url: string = 'http://ec2-54-84-29-231.compute-1.amazonaws.com:8080/odontoscheduler/api/patient';
+  private readonly url: string = 'https://odontoscheduler.onrender.com/odontoscheduler/api/patient';
 
   constructor(private http: HttpClient) { }
 

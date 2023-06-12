@@ -28,8 +28,7 @@ export interface AuthResponseData {
   providedIn: 'root',
 })
 export class AuthService {
-  private url =
-    'http://ec2-54-84-29-231.compute-1.amazonaws.com:8080/odontoscheduler/api/auth';
+  private url = 'https://odontoscheduler.onrender.com/odontoscheduler/api/auth';
 
   public user = new ReplaySubject<User>(1);
   public currentUser$: Observable<User> = this.user.asObservable();
